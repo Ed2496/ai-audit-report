@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 電力泡沫與模型競速 · 視覺導覽報告</title>
+<style>
+:root{
+  --bg:#e8f7f4; --bg2:#d3efe9; --card:#ffffff; --ink:#134e4a; --ink2:#0f766e;
+  --accent:#14b8a6; --accent2:#0d9488; --soft:#99e5da; --line:#5eead4;
+  --warn:#d97706; --bad:#dc2626; --good:#059669;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif;
+  background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 60%,#c4ebe3 100%);
+  color:var(--ink); overflow:hidden;
+}
+#deck{width:100vw;height:100vh;position:relative}
+.slide{
+  position:absolute;inset:0;display:none;flex-direction:column;
+  align-items:center;justify-content:center;padding:4vh 6vw;gap:14px;
+}
+.slide.active{display:flex;animation:fade .5s ease}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.kicker{font-size:14px;letter-spacing:.35em;color:var(--ink2);font-weight:700}
+h1{font-size:clamp(28px,4.6vw,52px);color:var(--ink2);text-align:center;line-height:1.25}
+h2{font-size:clamp(22px,3.2vw,36px);color:var(--ink2);text-align:center}
+.sub{font-size:clamp(14px,1.5vw,18px);color:#3d6f68;text-align:center;max-width:62em;line-height:1.8}
+.card{
+  background:var(--card);border:2px solid var(--line);border-radius:18px;
+  padding:20px 26px;box-shadow:0 8px 24px rgba(15,118,110,.10);
+  max-width:min(1020px,92vw);
+}
+svg{display:block;max-width:100%;height:auto}
+.grid{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.pill{
+  background:var(--card);border:2px solid var(--line);border-radius:999px;
+  padding:8px 18px;font-weight:700;color:var(--ink2);font-size:clamp(13px,1.4vw,17px);
+}
+.note{font-size:13px;color:#4a7a73;text-align:center;max-width:70em;line-height:1.7}
+.tag-ok{color:var(--good);font-weight:800}
+.tag-warn{color:var(--warn);font-weight:800}
+.tag-bad{color:var(--bad);font-weight:800}
+/* nav */
+#nav{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  display:flex;align-items:center;gap:12px;z-index:10;
+  background:rgba(255,255,255,.85);border:2px solid var(--line);
+  border-radius:999px;padding:8px 16px;backdrop-filter:blur(6px);
+}
+#nav button{
+  border:none;background:var(--accent);color:#fff;font-weight:800;
+  width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;
+}
+#nav button:hover{background:var(--accent2)}
+#dots{display:flex;gap:7px}
+#dots span{
+  width:10px;height:10px;border-radius:50%;background:var(--soft);cursor:pointer;
+  border:1px solid var(--accent);
+}
+#dots span.on{background:var(--accent2);transform:scale(1.25)}
+#pageno{font-weight:800;color:var(--ink2);font-size:14px;min-width:52px;text-align:center}
+#hint{position:fixed;top:14px;right:18px;font-size:12px;color:#5b8a83;z-index:10}
+</style>
+</head>
+<body>
+<div id="hint">← → 鍵盤切頁</div>
+<div id="deck">
+
+<!-- 0 封面 -->
+<section class="slide active">
+  <div class="kicker">CROSS-SOURCE CLAIM AUDIT · 2026-09-04</div>
+  <h1>AI 電力泡沫 × 模型競速<br>三支影片的交叉查證視覺導覽</h1>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" width="720">
+      <defs>
+        <radialGradient id="gBrain0" cx="50%" cy="45%" r="65%">
+          <stop offset="0%" stop-color="#ccfbf1"/><stop offset="100%" stop-color="#5eead4"/>
+        </radialGradient>
+      </defs>
+      <!-- brain -->
+      <g transform="translate(360,120)">
+        <ellipse cx="-52" cy="-14" rx="78" ry="62" fill="url(#gBrain0)" stroke="#0d9488" stroke-width="3"/>
+        <ellipse cx="52" cy="-14" rx="78" ry="62" fill="url(#gBrain0)" stroke="#0d9488" stroke-width="3"/>
+        <ellipse cx="0" cy="34" rx="96" ry="58" fill="url(#gBrain0)" stroke="#0d9488" stroke-width="3"/>
+        <path d="M-90,-30 Q-60,-10 -88,14 M-30,-66 Q-12,-34 -44,-16 M40,-64 Q20,-30 54,-12 M86,-28 Q58,-6 86,18 M-40,44 Q-10,28 14,50 M40,48 Q10,60 -16,66" fill="none" stroke="#0f766e" stroke-width="3" stroke-linecap="round" opacity=".65"/>
+        <circle cx="-52" cy="-14" r="7" fill="#0d9488"/><circle cx="52" cy="-14" r="7" fill="#0d9488"/>
+        <circle cx="0" cy="34" r="7" fill="#0d9488"/>
+        <line x1="-52" y1="-14" x2="52" y2="-14" stroke="#0d9488" stroke-width="2" stroke-dasharray="5 4"/>
+        <line x1="-52" y1="-14" x2="0" y2="34" stroke="#0d9488" stroke-width="2" stroke-dasharray="5 4"/>
+        <line x1="52" y1="-14" x2="0" y2="34" stroke="#0d9488" stroke-width="2" stroke-dasharray="5 4"/>
+      </g>
+      <text x="60" y="60" font-size="20" font-weight="800" fill="#0f766e">幽靈電力</text>
+      <text x="60" y="88" font-size="14" fill="#3d6f68">474 GW 申請的幻象</text>
+      <text x="600" y="60" font-size="20" font-weight="800" fill="#0f766e">同日齊掛</text>
+      <text x="600" y="88" font-size="14" fill="#3d6f68">集中的基礎設施</text>
+      <text x="60" y="196" font-size="20" font-weight="800" fill="#0f766e">模型軍備</text>
+      <text x="60" y="224" font-size="14" fill="#3d6f68">72 小時四連發</text>
+      <text x="600" y="196" font-size="20" font-weight="800" fill="#0f766e">分層驗證</text>
+      <text x="600" y="224" font-size="14" fill="#3d6f68">排隊≠簽約≠付錢</text>
+    </svg>
+  </div>
+  <p class="sub">九個概念、九張腦影像。核心問題只有一個：在 AI 淘金熱裡，哪些數字是真的？</p>
+</section>
+
+<!-- 1 幽靈電力 474GW -->
+<section class="slide">
+  <div class="kicker">概念一 · 幽靈需求</div>
+  <h2>474 GW 的申請大軍，九成來自資料中心</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760">
+      <defs><marker id="ar1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0d9488"/></marker></defs>
+      <!-- peak bar -->
+      <rect x="60" y="220" width="120" height="40" rx="6" fill="#99e5da" stroke="#0d9488" stroke-width="2"/>
+      <text x="120" y="205" font-size="15" font-weight="800" fill="#0f766e" text-anchor="middle">德州歷史峰值 91 GW</text>
+      <text x="120" y="248" font-size="14" fill="#134e4a" text-anchor="middle">×1</text>
+      <!-- queue bar -->
+      <rect x="240" y="40" width="330" height="220" rx="10" fill="#5eead4" stroke="#0d9488" stroke-width="3"/>
+      <text x="405" y="90" font-size="26" font-weight="800" fill="#134e4a" text-anchor="middle">ERCOT 大型用電申請</text>
+      <text x="405" y="140" font-size="44" font-weight="900" fill="#0f766e" text-anchor="middle">474 GW</text>
+      <text x="405" y="180" font-size="16" fill="#134e4a" text-anchor="middle">≈ 峰值的 5 倍以上</text>
+      <text x="405" y="212" font-size="15" fill="#134e4a" text-anchor="middle">約 90% 是資料中心</text>
+      <!-- ghost -->
+      <g transform="translate(650,140)">
+        <path d="M0,-58 Q46,-58 46,-6 L46,58 L30,42 L15,58 L0,42 L-15,58 L-30,42 L-46,58 L-46,-6 Q-46,-58 0,-58 Z" fill="#ffffff" stroke="#d97706" stroke-width="3" stroke-dasharray="7 5" opacity=".92"/>
+        <circle cx="-16" cy="-16" r="6" fill="#d97706"/><circle cx="16" cy="-16" r="6" fill="#d97706"/>
+        <text x="0" y="96" font-size="15" font-weight="800" fill="#d97706" text-anchor="middle">幽靈需求</text>
+      </g>
+      <line x1="570" y1="150" x2="600" y2="150" stroke="#0d9488" stroke-width="3" marker-end="url(#ar1)"/>
+      <text x="120" y="290" font-size="14" fill="#3d6f68">估計 4～5 成最終不會出現</text>
+    </svg>
+  </div>
+  <p class="note">判定：<span class="tag-ok">成立</span>｜474 GW、九成、5 倍峰值均與州長信函及 BNEF 數據一致。州長 Abbott 8/3 下令全面稽核、暫停 Batch Zero。</p>
+</section>
+
+<!-- 2 重複排隊機制 -->
+<section class="slide">
+  <div class="kicker">概念二 · 灌水機制</div>
+  <h2>同一座 1 GW，在三張排隊表上變成 3 GW</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760">
+      <defs><marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0d9488"/></marker></defs>
+      <!-- developer -->
+      <rect x="30" y="110" width="150" height="80" rx="12" fill="#ffffff" stroke="#0d9488" stroke-width="3"/>
+      <text x="105" y="145" font-size="17" font-weight="800" fill="#0f766e" text-anchor="middle">開發商</text>
+      <text x="105" y="172" font-size="14" fill="#134e4a" text-anchor="middle">實際只建 1 GW</text>
+      <!-- queues -->
+      <g font-size="15" font-weight="700" fill="#134e4a" text-anchor="middle">
+        <rect x="300" y="30" width="180" height="60" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+        <text x="390" y="66">德州隊列 +1 GW</text>
+        <rect x="300" y="120" width="180" height="60" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+        <text x="390" y="156">俄亥俄隊列 +1 GW</text>
+        <rect x="300" y="210" width="180" height="60" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+        <text x="390" y="246">賓州隊列 +1 GW</text>
+      </g>
+      <line x1="180" y1="135" x2="296" y2="62" stroke="#0d9488" stroke-width="3" marker-end="url(#ar2)"/>
+      <line x1="180" y1="150" x2="296" y2="150" stroke="#0d9488" stroke-width="3" marker-end="url(#ar2)"/>
+      <line x1="180" y1="165" x2="296" y2="238" stroke="#0d9488" stroke-width="3" marker-end="url(#ar2)"/>
+      <!-- result -->
+      <rect x="560" y="105" width="170" height="90" rx="12" fill="#5eead4" stroke="#0f766e" stroke-width="3"/>
+      <text x="645" y="142" font-size="17" font-weight="800" fill="#134e4a" text-anchor="middle">帳面需求</text>
+      <text x="645" y="178" font-size="30" font-weight="900" fill="#0f766e" text-anchor="middle">3 GW</text>
+      <line x1="484" y1="150" x2="556" y2="150" stroke="#0d9488" stroke-width="3" marker-end="url(#ar2)"/>
+      <text x="380" y="292" font-size="14" fill="#3d6f68" text-anchor="middle">不是造假，而是統計口徑把「期權」算成「需求」</text>
+    </svg>
+  </div>
+  <p class="note">判定：<span class="tag-ok">成立</span>｜排隊成本低、佔位即期權——最後不建、可轉賣，是開發商的理性選擇，也是「全美 700 GW」帳面數字的成因（700 GW 具體出處本次<span class="tag-warn">未證</span>）。</p>
+</section>
+
+<!-- 3 Exelon 漏斗 -->
+<section class="slide">
+  <div class="kicker">概念三 · 抵押試金石</div>
+  <h2>Exelon 實驗：一收抵押，需求蒸發近八成</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760">
+      <defs><marker id="ar3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0d9488"/></marker></defs>
+      <!-- funnel -->
+      <polygon points="80,40 680,40 560,120 200,120" fill="#99e5da" stroke="#0d9488" stroke-width="3"/>
+      <text x="380" y="88" font-size="20" font-weight="800" fill="#134e4a" text-anchor="middle">申請階段的高概率需求：18 GW</text>
+      <polygon points="200,130 560,130 480,205 280,205" fill="#5eead4" stroke="#0d9488" stroke-width="3"/>
+      <text x="380" y="174" font-size="19" font-weight="800" fill="#134e4a" text-anchor="middle">簽輸電擔保協議後：11 GW（-39%）</text>
+      <polygon points="280,215 480,215 430,285 330,285" fill="#14b8a6" stroke="#0f766e" stroke-width="3"/>
+      <text x="380" y="256" font-size="17" font-weight="900" fill="#ffffff" text-anchor="middle">真金白銀：4 GW</text>
+      <text x="700" y="256" font-size="13" fill="#3d6f68" text-anchor="end">＋約 10 億美元抵押</text>
+      <text x="60" y="290" font-size="14" fill="#3d6f68">漏斗每往下一層，數字就腰斬一次</text>
+    </svg>
+  </div>
+  <p class="note">判定：<span class="tag-ok">成立</span>｜Exelon Q2 2026 財報確認 18→11 GW，CFO 原話：約 4 GW 已簽 TSA 並繳納 10 億美元抵押。「要錢就縮水」是檢驗真需求最硬的濾網。</p>
+</section>
+
+<!-- 4 POWL 收據 -->
+<section class="slide">
+  <div class="kicker">概念四 · 真實的收據</div>
+  <h2>POWL：幽靈堆裡那張 4 億美元的付款單</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760">
+      <!-- bars: revenue vs orders vs backlog -->
+      <g font-size="14" fill="#134e4a" text-anchor="middle">
+        <rect x="90" y="180" width="110" height="80" rx="8" fill="#99e5da" stroke="#0d9488" stroke-width="2"/>
+        <text x="145" y="165" font-weight="800">單季營收</text>
+        <text x="145" y="226" font-size="19" font-weight="900" fill="#0f766e">3.12 億</text>
+        <rect x="260" y="60" width="110" height="200" rx="8" fill="#5eead4" stroke="#0d9488" stroke-width="3"/>
+        <text x="315" y="45" font-weight="800">單季新訂單 +158%</text>
+        <text x="315" y="170" font-size="19" font-weight="900" fill="#0f766e">9.34 億</text>
+        <rect x="430" y="80" width="110" height="180" rx="8" fill="#5eead4" stroke="#0d9488" stroke-width="3"/>
+        <text x="485" y="65" font-weight="800">期末積壓 +70%</text>
+        <text x="485" y="180" font-size="19" font-weight="900" fill="#0f766e">24 億</text>
+      </g>
+      <!-- receipt -->
+      <g transform="translate(590,60)">
+        <rect x="0" y="0" width="140" height="180" rx="6" fill="#ffffff" stroke="#0f766e" stroke-width="3"/>
+        <path d="M0,180 L12,172 L24,180 L36,172 L48,180 L60,172 L72,180 L84,172 L96,180 L108,172 L120,180 L132,172 L140,180" fill="none" stroke="#0f766e" stroke-width="2"/>
+        <text x="70" y="34" font-size="14" font-weight="800" fill="#0f766e" text-anchor="middle">收據 RECEIPT</text>
+        <line x1="16" y1="50" x2="124" y2="50" stroke="#99e5da" stroke-width="2"/>
+        <text x="70" y="80" font-size="13" fill="#134e4a" text-anchor="middle">資料中心配電大單</text>
+        <text x="70" y="116" font-size="24" font-weight="900" fill="#059669" text-anchor="middle">$4 億</text>
+        <text x="70" y="146" font-size="12" fill="#134e4a" text-anchor="middle">前三季累計 8 億+</text>
+      </g>
+      <text x="380" y="292" font-size="14" fill="#3d6f68" text-anchor="middle">book-to-bill 3.0x：訂單是營收的三倍——需求已走到「掏錢」這一步</text>
+    </svg>
+  </div>
+  <p class="note">判定：<span class="tag-ok">成立</span>｜Q3 FY2026 財報全套數字一致（零負債、現金 6.34 億）。反面提醒：大單讓訂單暴增，也可能讓後續季度劇烈波動。</p>
+</section>
+
+<!-- 5 分層漏斗 方法論 -->
+<section class="slide">
+  <div class="kicker">概念五 · 分層驗證法</div>
+  <h2>資料中心不是真假二分，是一層一層的漏斗</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 310" width="760">
+      <defs><marker id="ar5" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#ffffff"/></marker></defs>
+      <g font-weight="800" text-anchor="middle">
+        <rect x="80" y="20" width="600" height="46" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+        <text x="380" y="50" font-size="17" fill="#134e4a">L1 排隊申請（474 GW · 最容易灌水）</text>
+        <rect x="130" y="80" width="500" height="46" rx="10" fill="#99e5da" stroke="#0d9488" stroke-width="2"/>
+        <text x="380" y="110" font-size="17" fill="#134e4a">L2 客戶簽約（SB Energy 8.8 GW-IT）</text>
+        <rect x="180" y="140" width="400" height="46" rx="10" fill="#5eead4" stroke="#0d9488" stroke-width="2"/>
+        <text x="380" y="170" font-size="17" fill="#134e4a">L3 融資到位（抵押、信用支持）</text>
+        <rect x="230" y="200" width="300" height="46" rx="10" fill="#2dd4bf" stroke="#0f766e" stroke-width="2"/>
+        <text x="380" y="230" font-size="17" fill="#ffffff">L4 設備訂單（POWL $4 億）</text>
+        <rect x="280" y="260" width="200" height="42" rx="10" fill="#0f766e"/>
+        <text x="380" y="287" font-size="16" fill="#ffffff">L5 利潤表收入</text>
+      </g>
+      <line x1="700" y1="43" x2="700" y2="281" stroke="#0d9488" stroke-width="3" stroke-dasharray="6 5"/>
+      <text x="724" y="160" font-size="13" fill="#0f766e" transform="rotate(90 724 160)">越往下越接近真相</text>
+    </svg>
+  </div>
+  <p class="note">方法論：任何一層掉鏈子，上面的數字都會蒸發。投資判斷請直接看 L3～L4 的資金證據，別被 L1 的吉瓦數字興奮或恐嚇。</p>
+</section>
+
+<!-- 6 四模型齊發 -->
+<section class="slide">
+  <div class="kicker">概念六 · 72 小時四連發</div>
+  <h2>四家公司，回答四個不同的問題</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760">
+      <defs><marker id="ar6" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0d9488"/></marker></defs>
+      <line x1="60" y1="150" x2="700" y2="150" stroke="#0d9488" stroke-width="4" marker-end="url(#ar6)"/>
+      <g text-anchor="middle">
+        <circle cx="140" cy="150" r="12" fill="#14b8a6" stroke="#0f766e" stroke-width="3"/>
+        <rect x="60" y="50" width="160" height="72" rx="12" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+        <text x="140" y="78" font-size="15" font-weight="800" fill="#0f766e">Anthropic</text>
+        <text x="140" y="100" font-size="13" fill="#134e4a">Fable 5.1 / Mythos 5.1</text>
+        <text x="140" y="186" font-size="13" fill="#3d6f68">長週期專業工作</text>
+        <circle cx="300" cy="150" r="12" fill="#14b8a6" stroke="#0f766e" stroke-width="3"/>
+        <rect x="230" y="180" width="150" height="72" rx="12" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+        <text x="305" y="208" font-size="15" font-weight="800" fill="#0f766e">Google</text>
+        <text x="305" y="230" font-size="13" fill="#134e4a">Gemini 3.8 Flash</text>
+        <text x="300" y="112" font-size="13" fill="#3d6f68">前沿能力平價化</text>
+        <circle cx="460" cy="150" r="12" fill="#14b8a6" stroke="#0f766e" stroke-width="3"/>
+        <rect x="390" y="50" width="150" height="72" rx="12" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+        <text x="465" y="78" font-size="15" font-weight="800" fill="#0f766e">Meta</text>
+        <text x="465" y="100" font-size="13" fill="#134e4a">Muse Spark 1.3</text>
+        <text x="460" y="186" font-size="13" fill="#3d6f68">把事做完的 Agent</text>
+        <circle cx="620" cy="150" r="12" fill="#14b8a6" stroke="#0f766e" stroke-width="3"/>
+        <rect x="540" y="180" width="160" height="72" rx="12" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+        <text x="620" y="208" font-size="15" font-weight="800" fill="#0f766e">OpenAI</text>
+        <text x="620" y="230" font-size="13" fill="#134e4a">GPT-6 Astra</text>
+        <text x="620" y="112" font-size="13" fill="#3d6f68">下一輪競爭壓力</text>
+      </g>
+    </svg>
+  </div>
+  <p class="note">判定：<span class="tag-ok">成立</span>｜四項發布均於 9/1–9/3 獨立核實。原稿對 Astra「信號未官宣」的謹慎措辭正確（後於 9/3 分階段開放）。</p>
+</section>
+
+<!-- 7 Mostik -->
+<section class="slide">
+  <div class="kicker">概念七 · 潛空間通訊</div>
+  <h2>Mostik：兩個 AI 不再「說話」，直接交換思想</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760">
+      <defs><marker id="ar7" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0d9488"/></marker></defs>
+      <!-- model A -->
+      <g transform="translate(140,140)">
+        <circle r="52" fill="#ccfbf1" stroke="#0d9488" stroke-width="3"/>
+        <text y="-6" font-size="16" font-weight="800" fill="#0f766e" text-anchor="middle">AI 甲</text>
+        <text y="18" font-size="12" fill="#134e4a" text-anchor="middle">內部數學表示</text>
+      </g>
+      <!-- model B -->
+      <g transform="translate(620,140)">
+        <circle r="52" fill="#ccfbf1" stroke="#0d9488" stroke-width="3"/>
+        <text y="-6" font-size="16" font-weight="800" fill="#0f766e" text-anchor="middle">AI 乙</text>
+        <text y="18" font-size="12" fill="#134e4a" text-anchor="middle">內部數學表示</text>
+      </g>
+      <!-- old path (crossed) -->
+      <path d="M192,120 Q380,30 568,120" fill="none" stroke="#dc2626" stroke-width="3" stroke-dasharray="8 6"/>
+      <text x="380" y="52" font-size="14" font-weight="700" fill="#dc2626" text-anchor="middle">舊路：寫成文字 → 對方重讀（慢、失真）</text>
+      <line x1="360" y1="66" x2="400" y2="92" stroke="#dc2626" stroke-width="4"/>
+      <line x1="400" y1="66" x2="360" y2="92" stroke="#dc2626" stroke-width="4"/>
+      <!-- new path -->
+      <line x1="192" y1="160" x2="564" y2="160" stroke="#0d9488" stroke-width="5" marker-end="url(#ar7)"/>
+      <text x="380" y="190" font-size="15" font-weight="800" fill="#0f766e" text-anchor="middle">新路：直接傳遞 latent 向量</text>
+      <text x="380" y="232" font-size="13" fill="#3d6f68" text-anchor="middle">比喻：不再把文件印成紙讓對方掃描，而是直接傳數據</text>
+      <text x="380" y="282" font-size="13" fill="#d97706" text-anchor="middle">反面：機器對機器的「不可讀溝通」帶來可解釋性與監管難題</text>
+    </svg>
+  </div>
+  <p class="note">判定：<span class="tag-ok">成立</span>｜WIRED 9/2 專文確認 Mostik 團隊的潛空間通訊研究。技術極早期，但指向「智能互聯成本」這條新戰線。</p>
+</section>
+
+<!-- 8 同日齊掛 -->
+<section class="slide">
+  <div class="kicker">概念八 · 集中式脆弱</div>
+  <h2>同一個上午，御三家 90 分鐘內接連倒下</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 310" width="760">
+      <defs><marker id="ar8" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0d9488"/></marker></defs>
+      <!-- shared infra -->
+      <rect x="240" y="230" width="280" height="60" rx="12" fill="#5eead4" stroke="#0f766e" stroke-width="3"/>
+      <text x="380" y="256" font-size="16" font-weight="800" fill="#134e4a" text-anchor="middle">共用基礎設施層</text>
+      <text x="380" y="278" font-size="13" fill="#134e4a" text-anchor="middle">Colossus 1：Anthropic 全量租用（xAI 機房）</text>
+      <!-- three services -->
+      <g text-anchor="middle" font-weight="800">
+        <rect x="60" y="60" width="170" height="70" rx="12" fill="#ffffff" stroke="#dc2626" stroke-width="3"/>
+        <text x="145" y="90" font-size="16" fill="#dc2626">Claude ✕</text>
+        <text x="145" y="114" font-size="12" fill="#134e4a">9:00 錯誤率升高</text>
+        <rect x="295" y="60" width="170" height="70" rx="12" fill="#ffffff" stroke="#dc2626" stroke-width="3"/>
+        <text x="380" y="90" font-size="16" fill="#dc2626">Grok ✕</text>
+        <text x="380" y="114" font-size="12" fill="#134e4a">9:30 網頁/APP/API</text>
+        <rect x="530" y="60" width="170" height="70" rx="12" fill="#ffffff" stroke="#dc2626" stroke-width="3"/>
+        <text x="615" y="90" font-size="16" fill="#dc2626">ChatGPT ✕</text>
+        <text x="615" y="114" font-size="12" fill="#134e4a">10:58 確認故障</text>
+      </g>
+      <line x1="145" y1="130" x2="320" y2="228" stroke="#0d9488" stroke-width="3" marker-end="url(#ar8)"/>
+      <line x1="380" y1="130" x2="380" y2="226" stroke="#0d9488" stroke-width="3" marker-end="url(#ar8)"/>
+      <line x1="615" y1="130" x2="440" y2="228" stroke="#0d9488" stroke-width="3" marker-end="url(#ar8)"/>
+      <!-- gemini -->
+      <rect x="590" y="230" width="140" height="60" rx="12" fill="#ffffff" stroke="#059669" stroke-width="3"/>
+      <text x="660" y="256" font-size="15" font-weight="800" fill="#059669" text-anchor="middle">Gemini ✓ 正常</text>
+      <text x="660" y="278" font-size="11" fill="#134e4a" text-anchor="middle">自建 TPU 基礎設施</text>
+      <text x="60" y="200" font-size="14" fill="#3d6f68">以為備了三份保險，其實是同一個機房</text>
+    </svg>
+  </div>
+  <p class="note">判定：<span class="tag-ok">成立</span>｜Downdetector 與各家狀態頁確認。原稿敘事謹慎：基礎設施有交集，但無證據顯示 OpenAI 共用同一數據中心；根因三家均未公布。</p>
+</section>
+
+<!-- 9 心得 -->
+<section class="slide">
+  <div class="kicker">概念九 · 帶得走的一句話</div>
+  <h2>區分「排隊的、簽約的、付錢的」</h2>
+  <div class="card">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="720">
+      <defs><radialGradient id="gBrain9" cx="50%" cy="45%" r="65%">
+        <stop offset="0%" stop-color="#ccfbf1"/><stop offset="100%" stop-color="#5eead4"/></radialGradient></defs>
+      <g transform="translate(150,120)">
+        <ellipse cx="-35" cy="-10" rx="52" ry="42" fill="url(#gBrain9)" stroke="#0d9488" stroke-width="3"/>
+        <ellipse cx="35" cy="-10" rx="52" ry="42" fill="url(#gBrain9)" stroke="#0d9488" stroke-width="3"/>
+        <ellipse cx="0" cy="24" rx="64" ry="40" fill="url(#gBrain9)" stroke="#0d9488" stroke-width="3"/>
+        <path d="M-60,-20 Q-40,-6 -58,10 M24,-44 Q12,-20 36,-8 M-26,30 Q0,18 20,34" fill="none" stroke="#0f766e" stroke-width="3" stroke-linecap="round" opacity=".65"/>
+      </g>
+      <g font-size="16" font-weight="800" fill="#134e4a">
+        <rect x="290" y="40" width="380" height="50" rx="10" fill="#ccfbf1" stroke="#0d9488" stroke-width="2"/>
+        <text x="310" y="72">排隊的 ＝ 期權（可能永遠不建）</text>
+        <rect x="290" y="108" width="380" height="50" rx="10" fill="#99e5da" stroke="#0d9488" stroke-width="2"/>
+        <text x="310" y="140">簽約的 ＝ 承諾（仍需融資落地）</text>
+        <rect x="290" y="176" width="380" height="50" rx="10" fill="#14b8a6" stroke="#0f766e" stroke-width="2"/>
+        <text x="310" y="208" fill="#ffffff">付錢的 ＝ 現實（唯一的真相層）</text>
+      </g>
+    </svg>
+  </div>
+  <p class="sub">三支影片的核心數字九成以上經得起一級來源核對；真正值錢的啟示是——在 AI 淘金熱裡，分層看資金流向，比任何吉瓦數字都更能保護你的判斷力。</p>
+  <div class="grid">
+    <span class="pill">偏差 1：SB Energy 積壓實為 4,390 億（非 400 億）</span>
+    <span class="pill">偏差 2：項目實名 PORTS-Pike（非 Passport）</span>
+    <span class="pill">未證：全美 700 GW 出處</span>
+  </div>
+</section>
+
+</div>
+
+<div id="nav">
+  <button id="prev" aria-label="上一頁">‹</button>
+  <div id="dots"></div>
+  <span id="pageno"></span>
+  <button id="next" aria-label="下一頁">›</button>
+</div>
+
+<script>
+(function(){
+  var slides=document.querySelectorAll('.slide'),i=0;
+  var dots=document.getElementById('dots'),pn=document.getElementById('pageno');
+  slides.forEach(function(_,k){
+    var d=document.createElement('span');
+    d.addEventListener('click',function(){go(k)});
+    dots.appendChild(d);
+  });
+  function go(k){
+    i=(k+slides.length)%slides.length;
+    slides.forEach(function(s,j){s.classList.toggle('active',j===i)});
+    Array.prototype.forEach.call(dots.children,function(d,j){d.classList.toggle('on',j===i)});
+    pn.textContent=(i+1)+' / '+slides.length;
+  }
+  document.getElementById('prev').addEventListener('click',function(){go(i-1)});
+  document.getElementById('next').addEventListener('click',function(){go(i+1)});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ')go(i+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp')go(i-1);
+    if(e.key==='Home')go(0); if(e.key==='End')go(slides.length-1);
+  });
+  var sx=null;
+  document.addEventListener('touchstart',function(e){sx=e.touches[0].clientX});
+  document.addEventListener('touchend',function(e){
+    if(sx===null)return;var dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>50)go(dx<0?i+1:i-1);sx=null;
+  });
+  go(0);
+})();
+</script>
+</body>
+</html>
